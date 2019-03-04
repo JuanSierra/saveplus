@@ -4,6 +4,9 @@ const puppeteer = require('puppeteer');
 const dotenv = require('dotenv');
 const p_autoscroll = require('puppeteer-autoscroll-down');
 const scrollPageToBottom = p_autoscroll.scrollPageToBottom;
+const extractor = require('unfluff');
+const fs = require('fs');
+const htmlToText = require('html-to-text');
 
 dotenv.config({path: 'dot.env'});
 
@@ -142,13 +145,23 @@ async function scrapeInfiniteScrollItems(
 		await element.click();
 		await page.waitForSelector('div[data-cai="undefined"]');
 		let content = await page.$eval('div[data-cai="undefined"]', (el) => { return el.innerHTML});
-		await contents.push(content);
-		await console.log(contents);
+		let data = await extractor(content);
+		let data2 = await htmlToText.fromString(content);
+		await console.log(data);
+		await console.log(data2);
+		await contents.push(data);
 		await delay(1000);
 		await page.goBack();
 		await page.waitFor(() => !document.querySelector('div[data-cai="undefined"]'));
 	}
-	
+	//await console.log(contents);
+	let x = await (async function() {
+		let file = fs.createWriteStream('extracted.txt');
+		file.on('error', function(err) { /* error handling */ });
+		contents.forEach(function(v) { file.write(v.join(', ') + '\n'); });
+		file.end();
+	})();
+
 	//await console.log(items);
 	
 

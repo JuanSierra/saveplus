@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^6.2.0",
+    "html-to-text": "^4.0.0",
     "puppeteer": "^1.12.2",
     "puppeteer-autoscroll-down": "^0.1.1"
   }
