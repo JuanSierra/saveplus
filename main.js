@@ -4,7 +4,6 @@ const puppeteer = require('puppeteer');
 const dotenv = require('dotenv');
 const p_autoscroll = require('puppeteer-autoscroll-down');
 const scrollPageToBottom = p_autoscroll.scrollPageToBottom;
-const extractor = require('unfluff');
 const fs = require('fs');
 const htmlToText = require('html-to-text');
 
@@ -140,20 +139,38 @@ async function scrapeInfiniteScrollItems(
 	//autoScroll(page);
 	await scrapeInfiniteScrollItems(page, 100);
 	let items = await page.$x(`//div[@role="listitem" and @tabindex=0]`);
+	let images = await page.$x(`//div[@role="listitem" and @tabindex=0]/div[1]/img`);
 	let contents = [];
-	for (let element of items) {
+	await console.log(`ITEMS => ${items.length}`);
+	
+	for (let i=0; i<items.length; i++) {
+		let element = items[i];
+		await console.log(i);
+		
+		let valueHandle = await images[i].getProperty('src');
+		let linkText = await valueHandle.jsonValue();
+
+		await console.log(linkText);
 		await element.click();
-		await page.waitForSelector('div[data-cai="undefined"]');
-		let content = await page.$eval('div[data-cai="undefined"]', (el) => { return el.innerHTML});
-		let data = await extractor(content);
-		let data2 = await htmlToText.fromString(content);
-		await console.log(data);
-		await console.log(data2);
-		await contents.push(data);
-		await delay(1000);
-		await page.goBack();
-		await page.waitFor(() => !document.querySelector('div[data-cai="undefined"]'));
+		
+		try{
+			await page.waitForSelector('div[data-cai="undefined"]',  {timeout: 1000} );
+			
+			let content = await page.$eval('div[data-cai="undefined"]', (el) => { return el.innerHTML});
+			let data2 = await htmlToText.fromString(content);
+			await console.log(data2);
+			await contents.push(data2);
+			await delay(500);
+			await page.goBack();
+			await page.waitFor(() => !document.querySelector('div[data-cai="undefined"]'));
+		}catch(err){
+			await page.goBack();
+			await page.waitFor(() => !document.querySelector('div[data-cai="undefined"]'));
+			
+			continue;
+		}
 	}
+	
 	//await console.log(contents);
 	let x = await (async function() {
 		let file = fs.createWriteStream('extracted.txt');
@@ -174,5 +191,3 @@ async function scrapeInfiniteScrollItems(
 	
     //await browser.close()
 })()
-
-// posts comments sites
