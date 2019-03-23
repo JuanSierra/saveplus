@@ -57,49 +57,7 @@ async function scrapeInfiniteScrollItems(
       await page.evaluate('window.scrollTo(0, document.body.scrollHeight)');
       await page.waitForFunction(`document.body.scrollHeight > ${previousHeight}`);
       await page.waitFor(scrollDelay);
-	  
-	  //console.log(text);
-	  ////const text = page.evaluate(() => document.querySelector('div[data-waitmessage]>div[role="heading"]').textContent);
     }
-/*
-	items = await page.evaluate(async () => {
-		return await new Promise((resolve, reject) => {
-			resolve(document.querySelectorAll('div[role="listitem"]'));
-		});
-		//console.log(color);
-		//items.push(color);
-		//page.goBack();
-	});
-	*/	  
-		/*	
-	page.evaluate(() => {
-			console.log('before');
-			
-			elements[2].click();
-			//console.log(elements);
-			/*for (let element of elements){
-				element.click();
-				page.waitForSelector('div[data-cai="undefined"]');
-				page.goBack();
-			}
-		 });
-	  
-	  for (let element of extractedElements) {
-		  //console.log(element);
-		  element.click();
-		 // page.waitForSelector('div[data-cai="undefined"]');
-		 // page.goBack();
-		  await page.evaluate(async () => {
-			  const color = await new Promise((resolve, reject) => {
-				resolve($('div[data-cai="undefined"]').html());
-			  });
-			  console.log(color);
-			  items.push(color);
-			  page.goBack();
-		  })
-	  }
-	  */
-	
   } catch(e) { }
   return items;
 }
@@ -151,10 +109,13 @@ async function scrapeInfiniteScrollItems(
 		let linkText = await valueHandle.jsonValue();
 
 		await console.log(linkText);
+		if(linkText == "")
+			continue;
+		
 		await element.click();
 		
 		try{
-			await page.waitForSelector('div[data-cai="undefined"]',  {timeout: 1000} );
+			await page.waitForSelector('div[data-cai="undefined"]');
 			
 			let content = await page.$eval('div[data-cai="undefined"]', (el) => { return el.innerHTML});
 			let data2 = await htmlToText.fromString(content);
@@ -166,7 +127,11 @@ async function scrapeInfiniteScrollItems(
 		}catch(err){
 			await page.goBack();
 			await page.waitFor(() => !document.querySelector('div[data-cai="undefined"]'));
-			
+			await console.log('CAN DETECT');
+			await scrapeInfiniteScrollItems(page, 100);
+			items = await page.$x(`//div[@role="listitem" and @tabindex=0]`);
+			images = await page.$x(`//div[@role="listitem" and @tabindex=0]/div[1]/img`);
+
 			continue;
 		}
 	}
@@ -175,19 +140,9 @@ async function scrapeInfiniteScrollItems(
 	let x = await (async function() {
 		let file = fs.createWriteStream('extracted.txt');
 		file.on('error', function(err) { /* error handling */ });
-		contents.forEach(function(v) { file.write(v.join(', ') + '\n'); });
+		contents.forEach(function(v) { file.write(v + '\n'); });
 		file.end();
 	})();
-
-	//await console.log(items);
 	
-
-	//console.log(items)
-	//await page.screenshot({ path: path.normalize(`${__dirname}/example.png`) })
-	
-	//await console.log(items);
-	//await page.goto('https://plus.google.com/apps/activities/plus_one_posts');//apps/activities
-	//await page.screenshot({path: 'example.png'});
-	
-    //await browser.close()
+  //await browser.close()
 })()
