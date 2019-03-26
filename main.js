@@ -1,5 +1,3 @@
-//credits to https://intoli.com/blog/scrape-infinite-scroll/
-
 const puppeteer = require('puppeteer');
 const dotenv = require('dotenv');
 const p_autoscroll = require('puppeteer-autoscroll-down');
@@ -153,15 +151,11 @@ async function scrapeInfiniteScrollItems(
 			}
 		}
 	
-		//await console.log(contents);
 		let x = await (async function() {
-			let file = fs.writeFileSync('extracted.json', JSON.stringify(contents));
-			//contents.forEach(function(v) { file.write(v + '\n'); });
-			//file.write();
-			//file.end();
+		let file = fs.writeFileSync('extracted.json', JSON.stringify(contents));
 		})();
 	
-  //await browser.close()
+  	await browser.close()
 })()
 
 
