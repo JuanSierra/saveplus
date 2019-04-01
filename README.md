@@ -1,5 +1,5 @@
 ## saveplus
-The left way to REALLY backup some of your google plus history
+The left way to REALLY backup some of your google plus history. ** This script extracts data to a JSON and generate an HTML **
 
 ![sample](https://github.com/JuanSierra/saveplus/blob/master/assets/saveplus.gif)
 
