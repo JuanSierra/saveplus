@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Google Plus Saved</title>
+  <meta name="description" content="The +1 Post from G+>
+  <!--link rel="stylesheet" href="css/styles.css?v=1.0"-->
+	<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre.min.css">
+	<link rel="stylesheet" href="https://unpkg.com/spectre.css/dist/spectre-icons.min.css">
+</head>
+<body>
+<div class="container">
+  <div class="columns">
+	<div class="column col-8 col-mx-auto">
+		{{#.}}
+		<div class="accordion ">
+			<input id="accordion-{{index}}" type="radio" name="accordion-radio" hidden="" checked="">
+			<label class="accordion-header c-hand" for="accordion-{{index}}">
+			  <i class="icon icon-arrow-right mr-1"></i>
+			  <img width="60" height="60" src="{{avatar}}"/>
+			  <span class="card-title h5"> {{account}}</span> in <span class="card-subtitle text-gray">{{circle}}</span>    <span class="label label-secondary">{{date}}</span>
+			</label>
+			<div class="accordion-body card-body">
+				{{content}} 
+			</div>
+		</div>
+		{{/.}}
+	</div>
+</div>
+</div>
+</body>
+</html>

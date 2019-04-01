@@ -1,7 +1,5 @@
 const puppeteer = require('puppeteer');
 const dotenv = require('dotenv');
-const p_autoscroll = require('puppeteer-autoscroll-down');
-const scrollPageToBottom = p_autoscroll.scrollPageToBottom;
 const fs = require('fs');
 const htmlToText = require('html-to-text');
 var request = require('request');
@@ -31,12 +29,12 @@ const clickByText = async (page, text) => {
 
 function downloadImage(url) {
 	return new Promise((resolve, reject) => {
-			request(url, (error, response, body) => {
+			request({uri: url, encoding: null}, (error, response, body) => {
 					if (error) reject(error);
 					if (response.statusCode != 200) {
 							reject('Invalid status code <' + response.statusCode + '>');
 					}
-		var encoded = "data:" + response.headers["content-type"] + ";base64," + new Buffer(body).toString('base64');
+		var encoded = "data:" + response.headers["content-type"] + ";base64," + new Buffer.from(body).toString('base64');
 					resolve(encoded);
 			});
 	});
@@ -50,7 +48,6 @@ function delay(timeout) {
 
 async function scrapeInfiniteScrollItems(
   page,
-  itemTargetCount,
   scrollDelay = 1000,
 ) {
   let items = [];
@@ -100,7 +97,6 @@ async function scrapeInfiniteScrollItems(
 		navigationPromise
 		await page.goto('https://plus.google.com/apps/activities/plus_one_posts')
 		
-		//autoScroll(page);
 		await scrapeInfiniteScrollItems(page, 100);
 		let items = await page.$x(`//div[@role="listitem" and @tabindex=0]`);
 		let images = await page.$x(`//div[@role="listitem" and @tabindex=0]/div[1]/img`);
@@ -133,7 +129,7 @@ async function scrapeInfiniteScrollItems(
 				let content = await page.$eval('div[data-cai="undefined"]', (el) => { return el.innerHTML});
 				let data2 = await htmlToText.fromString(content);
 
-				let item = new PlusItem(user, dataimg, circle, date, data2)
+				let item = new PlusItem(contents.length, user, dataimg, circle, date, data2)
 
 				await contents.push(item);
 				await delay(500);
@@ -160,7 +156,8 @@ async function scrapeInfiniteScrollItems(
 
 
 class PlusItem {
-  constructor(account, avatar, circle, date, content) {
+  constructor(index, account, avatar, circle, date, content) {
+		this.index = index;
 		this.account = account;
 		this.avatar = avatar;
 		this.circle = circle;

@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ./main.js"
+    "start": "node ./main.js && mustache extracted.json template.mustache > savedplus.html"
   },
-  "author": "",
+  "author": "@JuanSierra",
   "license": "ISC",
   "dependencies": {
     "dotenv": "^6.2.0",
     "html-to-text": "^4.0.0",
+    "mustache": "^3.0.1",
     "puppeteer": "^1.12.2",
     "puppeteer-autoscroll-down": "^0.1.1",
     "request": "^2.88.0"

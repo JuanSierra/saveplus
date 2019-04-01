@@ -1,6 +1,8 @@
 ## saveplus
 The left way to REALLY backup some of your google plus history
 
+![sample](https://github.com/JuanSierra/saveplus/blob/master/assets/saveplus.gif)
+
 ## why?
 Google decided to kill again one more of his products and all your content is going to pass to the history. Give it a graceful grave ✿💀✿
 
